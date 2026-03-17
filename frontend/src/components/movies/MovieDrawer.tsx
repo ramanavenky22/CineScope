@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { X, Star, Clock, TrendingUp, DollarSign, Users, Film, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { X, Star, Clock, TrendingUp, DollarSign, Users, Film, ChevronRight, ExternalLink } from 'lucide-react';
 import { api } from '../../api/client';
 import type { Movie, MovieAnalytics, CastMember } from '../../types';
 
@@ -42,6 +43,7 @@ interface Props {
 }
 
 export function MovieDrawer({ movie, onClose, onSelectMovie }: Props) {
+  const navigate = useNavigate();
   const [analytics, setAnalytics] = useState<MovieAnalytics | null>(null);
   const [cast, setCast] = useState<CastMember[]>([]);
   const [similar, setSimilar] = useState<Movie[]>([]);
@@ -52,6 +54,7 @@ export function MovieDrawer({ movie, onClose, onSelectMovie }: Props) {
   const posterGradient = GENRE_GRADIENTS[genres[0] || ''] || 'linear-gradient(160deg, #1e2535, #2d3748)';
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     setAnalytics(null);
     setCast([]);
@@ -88,7 +91,16 @@ export function MovieDrawer({ movie, onClose, onSelectMovie }: Props) {
               Movie Detail
             </span>
           </div>
-          <button className="btn-icon" onClick={onClose}><X size={18} /></button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => { onClose(); navigate(`/movies/${movie.tconst}`); }}
+              style={{ fontSize: 12, gap: 5 }}
+            >
+              <ExternalLink size={13} /> Full Analytics
+            </button>
+            <button className="btn-icon" onClick={onClose}><X size={18} /></button>
+          </div>
         </div>
 
         <div className="drawer-body">
@@ -345,7 +357,7 @@ export function MovieDrawer({ movie, onClose, onSelectMovie }: Props) {
                     <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                       {member.category}
                       {member.characters && member.characters !== '\\N' && (
-                        <> · {member.characters.replace(/[\[\]"]/g, '')}</>
+                        <> · {member.characters.replace(/[[\]"]/g, '')}</>
                       )}
                     </div>
                   </div>
@@ -365,5 +377,5 @@ export function MovieDrawer({ movie, onClose, onSelectMovie }: Props) {
 }
 
 // Suppress unused import warnings
-const _unused = { DollarSign, TrendingUp };
+const _unused = { DollarSign, TrendingUp, Clock };
 void _unused;

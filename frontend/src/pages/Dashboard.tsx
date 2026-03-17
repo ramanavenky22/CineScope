@@ -24,7 +24,6 @@ export function Dashboard() {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   useEffect(() => {
-    setLoading(true);
     Promise.allSettled([
       api.getKPI(),
       api.getGenres(),

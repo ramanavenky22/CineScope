@@ -10,6 +10,7 @@ export function TrendsPage() {
   const [startYear, setStartYear] = useState(2000);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     api.getTrends({ startYear })
       .then(setTrends)

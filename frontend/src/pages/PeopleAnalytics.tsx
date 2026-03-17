@@ -23,6 +23,7 @@ export function PeopleAnalytics() {
   const [minMovies, setMinMovies] = useState(2);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     Promise.allSettled([
       api.getDirectors({ limit: 50, minMovies }),

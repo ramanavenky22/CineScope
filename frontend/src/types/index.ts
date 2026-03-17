@@ -217,6 +217,23 @@ export interface ActorStat {
   category: string;
 }
 
+export interface GenrePeer {
+  tconst: string;
+  primaryTitle: string;
+  startYear: number;
+  revenue?: number;
+  budget?: number;
+  averageRating?: number;
+  numVotes?: number;
+  isTarget: boolean;
+}
+
+export interface GenrePeersResponse {
+  tconst: string;
+  genre: string | null;
+  peers: GenrePeer[];
+}
+
 export type Theme = 'dark' | 'light';
 
 export type SortField = 'rating' | 'votes' | 'year' | 'title' | 'revenue' | 'runtime' | 'popularity';
