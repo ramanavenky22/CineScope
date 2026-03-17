@@ -2,7 +2,7 @@ import type {
   Movie, MovieListResponse, MovieAnalytics, CastMember,
   KPI, GenreStat, YearTrend, RatingAnalytics, RuntimeAnalytics,
   LanguageAnalytics, TopMovies, DirectorStat, ActorStat,
-  Person, SearchResult, NaturalSearchResult, Filters,
+  Person, SearchResult, NaturalSearchResult, Filters, GenrePeersResponse,
 } from '../types';
 
 const BASE_URL = 'http://localhost:3001';
@@ -42,6 +42,9 @@ export const api = {
 
   getMovieAnalytics: (id: string) =>
     apiFetch<MovieAnalytics>(`/api/movies/${id}/analytics`),
+
+  getMovieGenrePeers: (id: string, limit = 15, yearWindow = 5) =>
+    apiFetch<GenrePeersResponse>(`/api/movies/${id}/genre-peers?limit=${limit}&yearWindow=${yearWindow}`),
 
   /* ── Analytics ── */
   getKPI: (titleType = 'movie') =>

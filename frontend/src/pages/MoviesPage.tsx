@@ -1,11 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { SlidersHorizontal, ChevronLeft, ChevronRight, LayoutGrid, List } from 'lucide-react';
 import { api } from '../api/client';
 import { MovieCard } from '../components/movies/MovieCard';
-import { MovieDrawer } from '../components/movies/MovieDrawer';
 import { ResultsSummary } from '../components/movies/ResultsSummary';
-import type { Movie, MovieListResponse, Filters, SortField } from '../types';
+import type { MovieListResponse, Filters, SortField } from '../types';
 
 const GENRES = ['Action','Adventure','Animation','Comedy','Crime','Documentary','Drama',
   'Fantasy','Horror','Mystery','Romance','Sci-Fi','Thriller','Western','Biography','Music','Sport'];
@@ -14,10 +13,10 @@ const YEARS = Array.from({ length: 30 }, (_, i) => 2025 - i);
 
 export function MoviesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [data, setData] = useState<MovieListResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -199,7 +198,7 @@ export function MoviesPage() {
         viewMode === 'grid' ? (
           <div className="movie-grid">
             {data.results.map(movie => (
-              <MovieCard key={movie.tconst} movie={movie} onClick={setSelectedMovie} />
+              <MovieCard key={movie.tconst} movie={movie} onClick={m => navigate(`/movies/${m.tconst}`)} />
             ))}
           </div>
         ) : (
@@ -217,7 +216,7 @@ export function MoviesPage() {
               </thead>
               <tbody>
                 {data.results.map(m => (
-                  <tr key={m.tconst} style={{ cursor: 'pointer' }} onClick={() => setSelectedMovie(m)}>
+                  <tr key={m.tconst} style={{ cursor: 'pointer' }} onClick={() => navigate(`/movies/${m.tconst}`)}>
                     <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{m.primaryTitle}</td>
                     <td>{m.startYear}</td>
                     <td>{m.genres?.split(',')[0]}</td>
@@ -276,14 +275,6 @@ export function MoviesPage() {
         </div>
       )}
 
-      {/* Drawer */}
-      {selectedMovie && (
-        <MovieDrawer
-          movie={selectedMovie}
-          onClose={() => setSelectedMovie(null)}
-          onSelectMovie={setSelectedMovie}
-        />
-      )}
     </div>
   );
 }

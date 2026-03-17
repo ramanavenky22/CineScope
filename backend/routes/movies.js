@@ -293,4 +293,54 @@ router.get('/:id/analytics', (req, res) => {
   });
 });
 
+// GET /api/movies/:id/genre-peers - Top movies in same genre/year window for comparison charts
+router.get('/:id/genre-peers', (req, res) => {
+  const db = req.app.locals.db;
+  const { id } = req.params;
+  const { limit = 15, yearWindow = 5 } = req.query;
+
+  const movie = db.prepare(`
+    SELECT b.tconst, b.primaryTitle, b.genres, b.startYear, b.revenue, b.budget,
+           r.averageRating, r.numVotes
+    FROM title_basics b
+    LEFT JOIN title_ratings r ON b.tconst = r.tconst
+    WHERE b.tconst = ?
+  `).get(id);
+
+  if (!movie) return res.status(404).json({ error: 'Movie not found' });
+
+  const genres = movie.genres ? movie.genres.split(',') : [];
+  const primaryGenre = genres[0]?.trim() || null;
+
+  if (!primaryGenre) {
+    return res.json({ tconst: id, genre: null, peers: [] });
+  }
+
+  const yearMin = (movie.startYear || 2000) - parseInt(yearWindow);
+  const yearMax = (movie.startYear || 2000) + parseInt(yearWindow);
+
+  const peers = db.prepare(`
+    SELECT b.tconst, b.primaryTitle, b.startYear, b.revenue, b.budget,
+           r.averageRating, r.numVotes
+    FROM title_basics b
+    LEFT JOIN title_ratings r ON b.tconst = r.tconst
+    WHERE b.genres LIKE ?
+      AND b.titleType = 'movie'
+      AND b.startYear BETWEEN ? AND ?
+      AND r.averageRating IS NOT NULL
+      AND r.numVotes >= 100
+    ORDER BY r.averageRating DESC, r.numVotes DESC
+    LIMIT ?
+  `).all(`%${primaryGenre}%`, yearMin, yearMax, parseInt(limit));
+
+  // Ensure the current movie is included even if not in top N
+  const result = peers.map(p => ({ ...p, isTarget: p.tconst === id }));
+  if (!result.some(p => p.tconst === id)) {
+    result.push({ ...movie, isTarget: true });
+    result.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
+  }
+
+  res.json({ tconst: id, genre: primaryGenre, peers: result });
+});
+
 module.exports = router;
