@@ -47,7 +47,11 @@ export function MovieCard({ movie, onClick }: MovieCardProps) {
 
   const handleWatchlistClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    inWatchlist ? removeFromWatchlist(movie.tconst) : addToWatchlist(movie);
+    if (inWatchlist) {
+      removeFromWatchlist(movie.tconst);
+    } else {
+      addToWatchlist(movie);
+    }
   };
 
   const handleCompareClick = (e: React.MouseEvent) => {

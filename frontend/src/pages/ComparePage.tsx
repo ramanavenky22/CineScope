@@ -26,6 +26,7 @@ export function ComparePage() {
 
   useEffect(() => {
     if (compareList.length === 0) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     Promise.allSettled(compareList.map(m => api.getMovieAnalytics(m.tconst)))
       .then(results => {

@@ -1,4 +1,4 @@
-/* ============================================================
+`/* ============================================================
    CineScope Design System
    ============================================================ */
 
@@ -683,6 +683,7 @@ a:hover { text-decoration: underline; }
   line-height: 1.3;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin-bottom: 6px;
@@ -1486,12 +1487,9 @@ select.input {
 @media (max-width: 900px) {
   .sidebar { display: none; }
   .main-content { padding: 20px 16px; }
-<<<<<<< HEAD
   .spotlight-banner-content { grid-template-columns: 1fr; }
   .spotlight-selector { order: -1; }
-=======
   .compare-bar { left: 0; }
->>>>>>> main
 }
 
 @media (max-width: 640px) {

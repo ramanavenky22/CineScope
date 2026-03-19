@@ -26,6 +26,7 @@ export function TrendsPage() {
   }, [startYear]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGenreLoading(true);
     api.getGenreTrends({ startYear, topN })
       .then(setGenreTrends)
