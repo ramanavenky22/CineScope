@@ -45,6 +45,7 @@ app.use((_req, res) => res.status(404).json({ error: 'Route not found' }));
       console.log('  GET  /api/movies/:id/analytics');
       console.log('  GET  /api/movies/:id/similar');
       console.log('  GET  /api/movies/:id/cast');
+      console.log('  GET  /api/analytics/spotlight');
       console.log('  GET  /api/analytics/kpi');
       console.log('  GET  /api/analytics/genres');
       console.log('  GET  /api/analytics/trends');

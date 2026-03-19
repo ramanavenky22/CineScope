@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { Star, TrendingUp, DollarSign } from 'lucide-react';
 import { api } from '../api/client';
 import { KPICards } from '../components/analytics/KPICards';
+import { SpotlightBanner } from '../components/analytics/SpotlightBanner';
 import { GenreChart } from '../components/analytics/GenreChart';
 import { TrendsChart } from '../components/analytics/TrendsChart';
 import { TopMoviesTable, TABS } from '../components/analytics/TopMoviesTable';
 import { MovieDrawer } from '../components/movies/MovieDrawer';
-import type { KPI, GenreStat, YearTrend, TopMovies, Movie } from '../types';
+import type { KPI, GenreStat, YearTrend, TopMovies, Movie, SpotlightItem } from '../types';
 
 type TopTab = 'topRated' | 'mostVoted' | 'highestRevenue' | 'bestROI';
 
@@ -15,6 +16,7 @@ export function Dashboard() {
   const [genres, setGenres] = useState<GenreStat[]>([]);
   const [trends, setTrends] = useState<YearTrend[]>([]);
   const [topMovies, setTopMovies] = useState<TopMovies | null>(null);
+  const [spotlights, setSpotlights] = useState<SpotlightItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,11 +27,13 @@ export function Dashboard() {
 
   useEffect(() => {
     Promise.allSettled([
+      api.getSpotlights(),
       api.getKPI(),
       api.getGenres(),
       api.getTrends(),
       api.getTopMovies({ limit: 50 }),
-    ]).then(([kpiR, genresR, trendsR, topR]) => {
+    ]).then(([spotlightR, kpiR, genresR, trendsR, topR]) => {
+      if (spotlightR.status === 'fulfilled') setSpotlights(spotlightR.value);
       if (kpiR.status === 'fulfilled') setKpi(kpiR.value);
       if (genresR.status === 'fulfilled') setGenres(genresR.value);
       if (trendsR.status === 'fulfilled') setTrends(trendsR.value);
@@ -60,6 +64,8 @@ export function Dashboard() {
           Global analytics overview for all movies in the database.
         </p>
       </div>
+
+      {spotlights.length > 0 && <SpotlightBanner items={spotlights} />}
 
       {/* KPI Cards */}
       {kpi && <KPICards kpi={kpi} />}

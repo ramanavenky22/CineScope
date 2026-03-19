@@ -79,6 +79,22 @@ function createSchema(db) {
       knownForTitles    TEXT
     );
 
+    CREATE TABLE IF NOT EXISTS spotlight_items (
+      id             TEXT PRIMARY KEY,
+      title          TEXT NOT NULL,
+      releaseYear    INTEGER,
+      releaseWindow  TEXT NOT NULL,
+      genres         TEXT,
+      status         TEXT NOT NULL,
+      category       TEXT NOT NULL,
+      highlightLabel TEXT,
+      tagline        TEXT,
+      description    TEXT,
+      linkedTconst   TEXT,
+      sortOrder      INTEGER DEFAULT 0,
+      isActive       INTEGER DEFAULT 1
+    );
+
     CREATE INDEX IF NOT EXISTS idx_tb_startYear  ON title_basics(startYear);
     CREATE INDEX IF NOT EXISTS idx_tb_titleType  ON title_basics(titleType);
     CREATE INDEX IF NOT EXISTS idx_tr_rating     ON title_ratings(averageRating);
@@ -86,6 +102,7 @@ function createSchema(db) {
     CREATE INDEX IF NOT EXISTS idx_tp_tconst     ON title_principals(tconst);
     CREATE INDEX IF NOT EXISTS idx_te_parent     ON title_episode(parentTconst);
     CREATE INDEX IF NOT EXISTS idx_tc_directors  ON title_crew(directors);
+    CREATE INDEX IF NOT EXISTS idx_spotlight_active_order ON spotlight_items(isActive, sortOrder);
   `);
 }
 

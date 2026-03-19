@@ -4,6 +4,21 @@
 const express = require('express');
 const router = express.Router();
 
+// GET /api/analytics/spotlight - Curated dashboard spotlight items
+router.get('/spotlight', (req, res) => {
+  const db = req.app.locals.db;
+  const rows = db.prepare(`
+    SELECT
+      id, title, releaseYear, releaseWindow, genres, status, category,
+      highlightLabel, tagline, description, linkedTconst, sortOrder
+    FROM spotlight_items
+    WHERE isActive = 1
+    ORDER BY sortOrder ASC, releaseYear DESC, title ASC
+  `).all();
+
+  res.json(rows);
+});
+
 // GET /api/analytics/kpi - Global KPI summary cards
 router.get('/kpi', (req, res) => {
   const db = req.app.locals.db;
