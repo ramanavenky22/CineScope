@@ -128,6 +128,18 @@ export interface YearTrend {
   totalVotes: number;
 }
 
+export interface GenreTrendRow {
+  year: number;
+  genre: string;
+  movieCount: number;
+  avgRating: number | null;
+}
+
+export interface GenreTrendsResponse {
+  genres: string[];
+  rows: GenreTrendRow[];
+}
+
 export interface RatingAnalytics {
   histogram: { bucket: number; count: number }[];
   byYear: { year: number; avgRating: number; count: number }[];
