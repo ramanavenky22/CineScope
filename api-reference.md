@@ -33,6 +33,11 @@
 ### `GET /api/health`
 Server + DB status check.
 
+**Quick test:**
+```bash
+curl http://localhost:3001/api/health
+```
+
 **Response:**
 ```json
 {
