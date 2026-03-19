@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { BarChart2, Star, DollarSign, Clock } from 'lucide-react';
 import { api } from '../api/client';
 import { GenreChart } from '../components/analytics/GenreChart';
+import { GenreBubbleChart } from '../components/analytics/GenreBubbleChart';
 import type { GenreStat } from '../types';
 
 type Metric = 'movieCount' | 'avgRating' | 'totalRevenue';
@@ -49,6 +50,17 @@ export function GenreAnalyticsPage() {
           </div>
         </div>
         <GenreChart data={genres} metric={metric} />
+      </div>
+
+      {/* Bubble chart */}
+      <div className="chart-container" style={{ marginBottom: 24 }}>
+        <div style={{ marginBottom: 16 }}>
+          <div className="chart-title" style={{ margin: 0 }}>Quality vs. Commercial Landscape</div>
+          <div style={{ color: 'var(--text-secondary)', fontSize: 12.5, marginTop: 4 }}>
+            Each bubble is a genre &nbsp;·&nbsp; X = avg rating &nbsp;·&nbsp; Y = total box office revenue &nbsp;·&nbsp; Size = number of movies
+          </div>
+        </div>
+        <GenreBubbleChart data={genres} />
       </div>
 
       {/* Genre table */}

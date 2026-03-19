@@ -13,6 +13,7 @@ export interface Movie {
   averageRating?: number;
   numVotes?: number;
   originalTitle?: string;
+  posterUrl?: string;
   directors?: Person[];
   writers?: Person[];
   akas?: AKA[];
