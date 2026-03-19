@@ -31,7 +31,7 @@ This repository is prepared to satisfy presentation requirements:
 - **Express + SQLite API backend** for fast local analytics and simple deployment flow
 - **React + TypeScript frontend** for maintainable component architecture
 - **Vite tooling** for quick dev/build feedback loops
-- **Rule-based natural-language parser** for explainable AI-search behavior (with a future path to LLM integration)
+- **Gemini-powered natural-language search** (`gemini-2.5-flash`) that turns user prompts into SQL and returns ranked results
 
 ---
 
@@ -61,7 +61,7 @@ CineScope/
 
 ---
 
-## Getting Started
+## How to Run
 
 ### Prerequisites
 
@@ -90,7 +90,22 @@ npm run dev
 
 The app opens at `http://localhost:5173`.
 Frontend API calls use `http://localhost:3001` by default (configured in `frontend/src/api/client.ts`).
-Set `VITE_API_BASE_URL` in `frontend/.env` to override this for remote backends.
+Set `VITE_API_BASE_URL` in `frontend/.env.local` (or `.env`) to override this for remote backends.
+
+### Environment Variables
+
+Create `backend/.env`:
+
+```bash
+GEMINI_API_KEY=your_key_here
+```
+
+Optional backend variables:
+
+```bash
+PORT=3001
+NODE_ENV=development
+```
 
 ---
 
