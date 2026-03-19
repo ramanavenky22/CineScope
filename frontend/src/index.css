@@ -1099,6 +1099,42 @@ select.input {
 .animate-pulse { animation: pulse 2s ease-in-out infinite; }
 
 /* ── Compare Button on Movie Card ── */
+.watchlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 40px;
+  z-index: 3;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.movie-card:hover .watchlist-btn { opacity: 1; }
+
+.watchlist-btn:hover {
+  background: rgba(239, 68, 68, 0.7);
+  border-color: rgba(239, 68, 68, 0.8);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.watchlist-btn.active {
+  opacity: 1;
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+
 .compare-btn {
   position: absolute;
   top: 38px;

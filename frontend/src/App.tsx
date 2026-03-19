@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { CompareProvider } from './contexts/CompareContext';
+import { WatchlistProvider } from './contexts/WatchlistContext';
 import { Layout } from './components/layout/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { MoviesPage } from './pages/MoviesPage';
@@ -15,6 +16,7 @@ import { ComparePage } from './pages/ComparePage';
 export default function App() {
   return (
     <ThemeProvider>
+      <WatchlistProvider>
       <CompareProvider>
         <BrowserRouter>
           <Routes>
@@ -33,6 +35,7 @@ export default function App() {
           </Routes>
         </BrowserRouter>
       </CompareProvider>
+      </WatchlistProvider>
     </ThemeProvider>
   );
 }

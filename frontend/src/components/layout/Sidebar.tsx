@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, Film, BarChart2, TrendingUp,
-  Users, Sparkles, Bookmark, Scale,
+  Users, Sparkles, Heart, Scale,
 } from 'lucide-react';
 
 interface NavEntry {
@@ -21,7 +21,7 @@ const NAV_ITEMS: NavEntry[] = [
 
 const AI_ITEMS: NavEntry[] = [
   { to: '/search/ai',    icon: <Sparkles size={16} />,         label: 'AI Search' },
-  { to: '/saved',        icon: <Bookmark size={16} />,         label: 'Saved Queries' },
+  { to: '/saved',        icon: <Heart size={16} />,             label: 'Watchlist' },
 ];
 
 export function Sidebar() {

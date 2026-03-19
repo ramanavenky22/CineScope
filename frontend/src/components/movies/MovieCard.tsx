@@ -1,6 +1,7 @@
-import { Star, Clock, TrendingUp, Scale } from 'lucide-react';
+import { Star, Clock, TrendingUp, Scale, Heart } from 'lucide-react';
 import type { Movie } from '../../types';
 import { useCompare } from '../../contexts/CompareContext';
+import { useWatchlist } from '../../contexts/WatchlistContext';
 
 const GENRE_GRADIENTS: Record<string, string> = {
   Action:      'linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
@@ -40,7 +41,14 @@ export function MovieCard({ movie, onClick }: MovieCardProps) {
   const genres = movie.genres?.split(',').map(g => g.trim()).slice(0, 2) || [];
   const revenue = formatRevenue(movie.revenue);
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
   const inCompare = isInCompare(movie.tconst);
+  const inWatchlist = isInWatchlist(movie.tconst);
+
+  const handleWatchlistClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    inWatchlist ? removeFromWatchlist(movie.tconst) : addToWatchlist(movie);
+  };
 
   const handleCompareClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -109,6 +117,15 @@ export function MovieCard({ movie, onClick }: MovieCardProps) {
             {movie.startYear}
           </span>
         )}
+
+        {/* Watchlist button */}
+        <button
+          className={`watchlist-btn${inWatchlist ? ' active' : ''}`}
+          onClick={handleWatchlistClick}
+          title={inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}
+        >
+          <Heart size={12} fill={inWatchlist ? 'currentColor' : 'none'} />
+        </button>
 
         {/* Compare button */}
         <button
