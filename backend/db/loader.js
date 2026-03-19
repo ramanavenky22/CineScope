@@ -12,6 +12,18 @@ const { seed } = require('./seed');
 const DATA_DIR = path.join(__dirname, '..', '..', 'data');
 const DB_PATH = path.join(__dirname, 'cinescope.db');
 
+// On Vercel, the deployment bundle is read-only. Copy the DB to /tmp so
+// SQLite can create its WAL sidecar files and perform writes.
+function resolveDbPath() {
+  if (!process.env.VERCEL) return DB_PATH;
+  const tmpPath = '/tmp/cinescope.db';
+  if (!fs.existsSync(tmpPath)) {
+    console.log('[loader] Serverless env detected — copying DB to /tmp...');
+    fs.copyFileSync(DB_PATH, tmpPath);
+  }
+  return tmpPath;
+}
+
 function createSchema(db) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS title_basics (
@@ -121,7 +133,7 @@ async function loadTsvFile(db, filePath, tableName, columnMap) {
 }
 
 async function initDb() {
-  const db = new Database(DB_PATH);
+  const db = new Database(resolveDbPath());
   db.pragma('journal_mode = WAL');
   db.pragma('synchronous = NORMAL');
 
