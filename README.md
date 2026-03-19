@@ -2,11 +2,36 @@
 
 A full-stack movie analytics and discovery platform powered by IMDB data. Browse and search movies, explore genre breakdowns, year-over-year trends, people leaderboards, and a natural language search interface.
 
+## Problem and Idea
+
+Movie data is massive and hard to explore with simple list UIs. CineScope addresses this by combining:
+- a movie discovery interface,
+- analytics dashboards for trends and comparisons,
+- and natural-language search for faster query building.
+
+## Project Requirement Alignment
+
+This repository is prepared to satisfy presentation requirements:
+- Working implementation (frontend + backend)
+- Organized structure (`frontend/`, `backend/`, docs)
+- Incremental commit history (small, traceable check-ins)
+- README coverage for:
+  - problem and idea,
+  - key technical choices,
+  - run instructions
+
 ## Tech Stack
 
 - **Backend**: Node.js + Express + SQLite (better-sqlite3)
 - **Frontend**: React 19 + TypeScript + Vite + Recharts
 - **Database**: SQLite with WAL mode, IMDB-compatible schema
+
+## Key Technical Choices
+
+- **Express + SQLite API backend** for fast local analytics and simple deployment flow
+- **React + TypeScript frontend** for maintainable component architecture
+- **Vite tooling** for quick dev/build feedback loops
+- **Rule-based natural-language parser** for explainable AI-search behavior (with a future path to LLM integration)
 
 ---
 
