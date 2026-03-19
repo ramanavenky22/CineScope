@@ -4,3 +4,6 @@ data
 cinescope.db
 cinescope.db-shm
 cinescope.db-wal
+backend/db/*.db
+backend/db/*.db-shm
+backend/db/*.db-wal
