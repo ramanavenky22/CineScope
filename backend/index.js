@@ -39,6 +39,7 @@ app.use((_req, res) => res.status(404).json({ error: 'Route not found' }));
     app.locals.db = db;
     app.listen(PORT, () => {
       console.log(`CineScope backend running on http://localhost:${PORT}`);
+      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log('Available routes:');
       console.log('  GET  /api/health');
       console.log('  GET  /api/movies');
