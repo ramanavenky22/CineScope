@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react';
 import { api } from '../api/client';
 import { TrendsChart } from '../components/analytics/TrendsChart';
-import type { YearTrend } from '../types';
+import { GenreTrendsChart } from '../components/analytics/GenreTrendsChart';
+import type { YearTrend, GenreTrendsResponse } from '../types';
+import type { GenreTrendMetric } from '../components/analytics/GenreTrendsChart';
 
 export function TrendsPage() {
   const [trends, setTrends] = useState<YearTrend[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [startYear, setStartYear] = useState(2000);
+
+  const [genreTrends, setGenreTrends] = useState<GenreTrendsResponse | null>(null);
+  const [genreLoading, setGenreLoading] = useState(true);
+  const [genreMetric, setGenreMetric] = useState<GenreTrendMetric>('movieCount');
+  const [topN, setTopN] = useState(8);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -17,6 +24,14 @@ export function TrendsPage() {
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, [startYear]);
+
+  useEffect(() => {
+    setGenreLoading(true);
+    api.getGenreTrends({ startYear, topN })
+      .then(setGenreTrends)
+      .catch(() => setGenreTrends(null))
+      .finally(() => setGenreLoading(false));
+  }, [startYear, topN]);
 
   if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}><div className="spinner" style={{ width: 32, height: 32 }} /></div>;
   if (error) return <div className="error-banner">{error}</div>;
@@ -93,6 +108,63 @@ export function TrendsPage() {
         <div className="chart-container">
           <div className="chart-title">Total Box Office Revenue per Year</div>
           <TrendsChart data={trends} metric="totalRevenue" />
+        </div>
+
+        {/* Genre Growth Over Time */}
+        <div className="chart-container">
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
+            <div>
+              <div className="chart-title" style={{ margin: 0 }}>Genre Growth Over Time</div>
+              <div style={{ color: 'var(--text-secondary)', fontSize: 12.5, marginTop: 4 }}>
+                Which genres are rising or declining year-over-year
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <div className="tab-bar">
+                <button
+                  className={`tab-btn${genreMetric === 'movieCount' ? ' active' : ''}`}
+                  onClick={() => setGenreMetric('movieCount')}
+                >
+                  Count
+                </button>
+                <button
+                  className={`tab-btn${genreMetric === 'avgRating' ? ' active' : ''}`}
+                  onClick={() => setGenreMetric('avgRating')}
+                >
+                  Avg Rating
+                </button>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Top genres:</label>
+                <select
+                  className="input"
+                  style={{ width: 'auto' }}
+                  value={topN}
+                  onChange={e => setTopN(Number(e.target.value))}
+                >
+                  {[5, 8, 10, 12].map(n => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {genreLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
+              <div className="spinner" style={{ width: 28, height: 28 }} />
+            </div>
+          ) : genreTrends && genreTrends.rows.length > 0 ? (
+            <GenreTrendsChart
+              genres={genreTrends.genres}
+              rows={genreTrends.rows}
+              metric={genreMetric}
+            />
+          ) : (
+            <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)' }}>
+              No genre trend data available.
+            </div>
+          )}
         </div>
       </div>
     </div>

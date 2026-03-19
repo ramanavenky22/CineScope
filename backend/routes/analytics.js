@@ -231,6 +231,80 @@ router.get('/runtime', (req, res) => {
   res.json({ distribution, byGenre, vsRating, stats });
 });
 
+// GET /api/analytics/genre-trends - Per-genre year-by-year movie count and avg rating
+router.get('/genre-trends', (req, res) => {
+  const db = req.app.locals.db;
+  const { titleType = 'movie', startYear = 2000, topN = 8 } = req.query;
+  const N = Math.min(15, Math.max(1, parseInt(topN)));
+  const yr = parseInt(startYear);
+
+  const rows = db.prepare(`
+    SELECT b.startYear as year, b.genres, r.averageRating
+    FROM title_basics b
+    LEFT JOIN title_ratings r ON b.tconst = r.tconst
+    WHERE b.titleType = ?
+      AND b.startYear >= ?
+      AND b.genres IS NOT NULL
+      AND b.startYear IS NOT NULL
+    ORDER BY b.startYear ASC
+  `).all(titleType, yr);
+
+  // Tally total movie count per individual genre to identify top N
+  const genreTotals = {};
+  rows.forEach(row => {
+    row.genres.split(',').forEach(g => {
+      const genre = g.trim();
+      if (!genre || genre === '\\N') return;
+      genreTotals[genre] = (genreTotals[genre] || 0) + 1;
+    });
+  });
+
+  const topGenres = Object.keys(genreTotals)
+    .sort((a, b) => genreTotals[b] - genreTotals[a])
+    .slice(0, N);
+  const topGenreSet = new Set(topGenres);
+
+  // Aggregate movie count and ratings by year + genre
+  const byYearGenre = {};
+  rows.forEach(({ year, genres, averageRating }) => {
+    genres.split(',').forEach(g => {
+      const genre = g.trim();
+      if (!topGenreSet.has(genre)) return;
+      if (!byYearGenre[year]) byYearGenre[year] = {};
+      if (!byYearGenre[year][genre]) {
+        byYearGenre[year][genre] = { movieCount: 0, ratingSum: 0, ratingCount: 0 };
+      }
+      byYearGenre[year][genre].movieCount++;
+      if (averageRating != null) {
+        byYearGenre[year][genre].ratingSum += averageRating;
+        byYearGenre[year][genre].ratingCount++;
+      }
+    });
+  });
+
+  // Flatten to a sorted array of { year, genre, movieCount, avgRating }
+  const result = [];
+  Object.keys(byYearGenre)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .forEach(year => {
+      topGenres.forEach(genre => {
+        const d = byYearGenre[year]?.[genre];
+        if (!d) return;
+        result.push({
+          year,
+          genre,
+          movieCount: d.movieCount,
+          avgRating: d.ratingCount > 0
+            ? Math.round((d.ratingSum / d.ratingCount) * 100) / 100
+            : null,
+        });
+      });
+    });
+
+  res.json({ genres: topGenres, rows: result });
+});
+
 // GET /api/analytics/languages - Language/region analytics
 router.get('/languages', (req, res) => {
   const db = req.app.locals.db;

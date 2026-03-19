@@ -13,6 +13,7 @@ export interface Movie {
   averageRating?: number;
   numVotes?: number;
   originalTitle?: string;
+  posterUrl?: string;
   directors?: Person[];
   writers?: Person[];
   akas?: AKA[];
@@ -126,6 +127,18 @@ export interface YearTrend {
   totalRevenue: number;
   avgRevenue: number;
   totalVotes: number;
+}
+
+export interface GenreTrendRow {
+  year: number;
+  genre: string;
+  movieCount: number;
+  avgRating: number | null;
+}
+
+export interface GenreTrendsResponse {
+  genres: string[];
+  rows: GenreTrendRow[];
 }
 
 export interface RatingAnalytics {

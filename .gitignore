@@ -1,2 +1,6 @@
 node_modules
 data
+.env
+cinescope.db
+cinescope.db-shm
+cinescope.db-wal

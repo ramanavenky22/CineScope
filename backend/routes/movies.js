@@ -62,7 +62,7 @@ router.get('/', (req, res) => {
     SELECT DISTINCT
       b.tconst, b.primaryTitle, b.titleType, b.startYear,
       b.runtimeMinutes, b.genres, b.isAdult,
-      b.budget, b.revenue, b.popularity,
+      b.budget, b.revenue, b.popularity, b.posterUrl,
       r.averageRating, r.numVotes
     FROM title_basics b
     LEFT JOIN title_ratings r ON b.tconst = r.tconst
@@ -183,7 +183,7 @@ router.get('/:id/similar', (req, res) => {
 
   const similar = db.prepare(`
     SELECT b.tconst, b.primaryTitle, b.startYear, b.genres, b.runtimeMinutes,
-           r.averageRating, r.numVotes
+           b.posterUrl, r.averageRating, r.numVotes
     FROM title_basics b
     LEFT JOIN title_ratings r ON b.tconst = r.tconst
     WHERE b.tconst != ?

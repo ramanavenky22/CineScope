@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Star, Clock, Film, ChevronLeft, ChevronRight,
-  Users, DollarSign, TrendingUp, Award, BarChart2,
+  Users, DollarSign, TrendingUp, Award, BarChart2, Sparkles, Info,
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -245,7 +245,16 @@ export function MovieDetailPage() {
           display: 'flex',
           alignItems: 'flex-end',
           padding: '0 28px 20px',
+          overflow: 'hidden',
         }}>
+          {movie.posterUrl && (
+            <img
+              src={movie.posterUrl}
+              alt=""
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.3, filter: 'blur(8px) saturate(1.2)' }}
+              onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
+          )}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.65) 100%)' }} />
           <div style={{
             width: 80, height: 80, borderRadius: 12, flexShrink: 0,
@@ -254,8 +263,13 @@ export function MovieDetailPage() {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             position: 'relative', zIndex: 1, marginRight: 20,
             backdropFilter: 'blur(4px)',
+            overflow: 'hidden',
           }}>
-            <Film size={32} style={{ color: 'rgba(255,255,255,0.55)' }} />
+            {movie.posterUrl ? (
+              <img src={movie.posterUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+            ) : (
+              <Film size={32} style={{ color: 'rgba(255,255,255,0.55)' }} />
+            )}
           </div>
           <div style={{ position: 'relative', zIndex: 1, flex: 1 }}>
             <h1 style={{ fontSize: 24, color: '#fff', marginBottom: 8, lineHeight: 1.25 }}>
@@ -361,6 +375,27 @@ export function MovieDetailPage() {
           </div>
         ))}
       </div>
+
+      {/* AI Insight Summary */}
+      {(() => {
+        const aiInsights = generateInsights(movie, analytics, primaryGenre);
+        if (!aiInsights.length) return null;
+        return (
+          <div className="chart-container" style={{ marginBottom: 20 }}>
+            <div className="chart-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Sparkles size={16} style={{ color: 'var(--accent)' }} />
+              AI Insight Summary
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {aiInsights.map((insight, i) => (
+                <div key={i} className="insight-card">
+                  {insight}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Charts Row 1: Rating Benchmark + Financial Overview */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
@@ -630,7 +665,7 @@ export function MovieDetailPage() {
           )}
         </div>
 
-        {/* Similar Movies */}
+        {/* Similar Movies with Recommendation Explanations */}
         <div className="chart-container">
           <div className="chart-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Film size={16} style={{ color: 'var(--accent)' }} />
@@ -643,12 +678,12 @@ export function MovieDetailPage() {
               const mGenres = typeof m.genres === 'string'
                 ? m.genres.split(',').map(g => g.trim())
                 : ((m.genres as unknown as string[]) ?? []);
+              const reasons = getRecommendationReasons(movie, m, genres, mGenres);
               return (
                 <div
                   key={m.tconst}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 12,
-                    padding: '8px 10px', borderRadius: 'var(--radius-sm)',
+                    padding: '10px 10px', borderRadius: 'var(--radius-sm)',
                     cursor: 'pointer', transition: 'background 0.15s',
                   }}
                   className="card-hover"
@@ -656,24 +691,37 @@ export function MovieDetailPage() {
                   onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-hover)')}
                   onMouseLeave={e => (e.currentTarget.style.background = '')}
                 >
-                  <div style={{
-                    width: 36, height: 36, borderRadius: 6, flexShrink: 0,
-                    background: GENRE_GRADIENTS[mGenres[0] ?? ''] ?? 'var(--bg-tertiary)',
-                  }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {m.primaryTitle}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{
+                      width: 36, height: 36, borderRadius: 6, flexShrink: 0,
+                      background: GENRE_GRADIENTS[mGenres[0] ?? ''] ?? 'var(--bg-tertiary)',
+                    }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {m.primaryTitle}
+                      </div>
+                      <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
+                        {m.startYear} · {mGenres[0]}
+                      </div>
                     </div>
-                    <div style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>
-                      {m.startYear} · {mGenres[0]}
-                    </div>
+                    {m.averageRating !== undefined && (
+                      <span style={{ fontSize: 12, color: '#fbbf24', display: 'flex', alignItems: 'center', gap: 3, flexShrink: 0 }}>
+                        <Star size={11} fill="currentColor" /> {m.averageRating.toFixed(1)}
+                      </span>
+                    )}
+                    <ChevronRight size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
                   </div>
-                  {m.averageRating !== undefined && (
-                    <span style={{ fontSize: 12, color: '#fbbf24', display: 'flex', alignItems: 'center', gap: 3, flexShrink: 0 }}>
-                      <Star size={11} fill="currentColor" /> {m.averageRating.toFixed(1)}
-                    </span>
+                  {/* Recommendation Explanation */}
+                  {reasons.length > 0 && (
+                    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginTop: 6, marginLeft: 48 }}>
+                      {reasons.map((reason, i) => (
+                        <span key={i} className="recommendation-reason">
+                          <Info size={9} />
+                          {reason}
+                        </span>
+                      ))}
+                    </div>
                   )}
-                  <ChevronRight size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
                 </div>
               );
             })
@@ -682,4 +730,99 @@ export function MovieDetailPage() {
       </div>
     </div>
   );
+}
+
+/* ── AI Insight Generation ── */
+function generateInsights(movie: Movie, analytics: MovieAnalytics | null, primaryGenre: string): string[] {
+  const insights: string[] = [];
+  if (!analytics) return insights;
+
+  // Rating vs genre average
+  const ratingDiff = analytics.benchmarks.ratingVsGenreAvg;
+  if (ratingDiff !== null && analytics.benchmarks.genreAvg?.avgRating) {
+    const pct = Math.abs(Math.round((ratingDiff / analytics.benchmarks.genreAvg.avgRating) * 100));
+    if (ratingDiff > 0) {
+      insights.push(`This movie outperformed its ${primaryGenre} genre average by ${pct}% in rating.`);
+    } else if (ratingDiff < -0.3) {
+      insights.push(`Rated ${pct}% below the ${primaryGenre} genre average.`);
+    }
+  }
+
+  // Revenue vs genre average
+  const revDiff = analytics.benchmarks.revenueVsGenreAvg;
+  if (revDiff !== null && analytics.benchmarks.genreAvg?.avgRevenue && analytics.benchmarks.genreAvg.avgRevenue > 0) {
+    const pct = Math.abs(Math.round((revDiff / analytics.benchmarks.genreAvg.avgRevenue) * 100));
+    if (revDiff > 0) {
+      insights.push(`Box office revenue ${pct}% above ${primaryGenre} genre average.`);
+    } else if (pct > 20) {
+      insights.push(`Box office revenue ${pct}% below ${primaryGenre} genre average.`);
+    }
+  }
+
+  // ROI
+  if (analytics.financials.roi !== null) {
+    if (analytics.financials.roiCategory === 'High') {
+      insights.push(`High ROI - generated ${analytics.financials.roi.toFixed(1)}x return on investment.`);
+    } else if (analytics.financials.roiCategory === 'Loss') {
+      insights.push(`Commercial underperformer with negative return on investment.`);
+    } else if (analytics.financials.roiCategory === 'Medium') {
+      insights.push(`Moderate commercial success with ${analytics.financials.roi.toFixed(1)}x ROI.`);
+    }
+  }
+
+  // Year ranking
+  if (analytics.rankings.yearRankByRating) {
+    const rank = analytics.rankings.yearRankByRating;
+    if (rank <= 3) {
+      insights.push(`Top ${rank} highest rated movie of ${movie.startYear}.`);
+    } else if (rank <= 10) {
+      insights.push(`Top 10 highest rated movie of ${movie.startYear} (ranked #${rank}).`);
+    }
+  }
+
+  // Runtime comparison
+  const runtimeDiff = analytics.benchmarks.runtimeVsGenreAvg;
+  if (runtimeDiff !== null && Math.abs(runtimeDiff) > 10) {
+    insights.push(`${Math.abs(Math.round(runtimeDiff))} minutes ${runtimeDiff > 0 ? 'longer' : 'shorter'} than the average ${primaryGenre} movie.`);
+  }
+
+  // Rating vs year average
+  const yearDiff = analytics.benchmarks.ratingVsYearAvg;
+  if (yearDiff !== null && Math.abs(yearDiff) > 0.5) {
+    if (yearDiff > 0) {
+      insights.push(`Rated ${yearDiff.toFixed(1)} points above the ${movie.startYear} average — a standout year performance.`);
+    }
+  }
+
+  return insights;
+}
+
+/* ── Recommendation Explanation ── */
+function getRecommendationReasons(baseMovie: Movie, simMovie: Movie, baseGenres: string[], simGenres: string[]): string[] {
+  const reasons: string[] = [];
+
+  const shared = baseGenres.filter(g => simGenres.includes(g));
+  if (shared.length > 0) {
+    reasons.push(`Same genre: ${shared.join(', ')}`);
+  }
+
+  if (baseMovie.averageRating && simMovie.averageRating) {
+    const diff = Math.abs(baseMovie.averageRating - simMovie.averageRating);
+    if (diff <= 0.5) {
+      reasons.push('Very similar rating');
+    } else if (diff <= 1.5) {
+      reasons.push('Similar rating range');
+    }
+  }
+
+  if (baseMovie.startYear && simMovie.startYear) {
+    const diff = Math.abs(baseMovie.startYear - simMovie.startYear);
+    if (diff === 0) {
+      reasons.push('Same year');
+    } else if (diff <= 3) {
+      reasons.push('Same era');
+    }
+  }
+
+  return reasons;
 }
