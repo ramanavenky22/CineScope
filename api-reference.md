@@ -616,6 +616,7 @@ GET /api/search?q=Nolan&limit=5
 ### `POST /api/search/natural`
 
 Parse a free-text query into structured filters, execute, and return results with insights.
+Current implementation uses rule-based parsing (keyword/pattern extraction), not an external LLM.
 
 **Request Body:**
 ```json
