@@ -1,6 +1,6 @@
 import type {
   Movie, MovieListResponse, MovieAnalytics, CastMember,
-  KPI, GenreStat, YearTrend, RatingAnalytics, RuntimeAnalytics,
+  KPI, GenreStat, YearTrend, GenreTrendsResponse, RatingAnalytics, RuntimeAnalytics,
   LanguageAnalytics, TopMovies, DirectorStat, ActorStat,
   Person, SearchResult, NaturalSearchResult, Filters, GenrePeersResponse,
 } from '../types';
@@ -55,6 +55,9 @@ export const api = {
 
   getTrends: (params: { titleType?: string; startYear?: number } = {}) =>
     apiFetch<YearTrend[]>(`/api/analytics/trends${toQuery(params as Record<string, string | number | boolean | undefined>)}`),
+
+  getGenreTrends: (params: { titleType?: string; startYear?: number; topN?: number } = {}) =>
+    apiFetch<GenreTrendsResponse>(`/api/analytics/genre-trends${toQuery(params as Record<string, string | number | boolean | undefined>)}`),
 
   getRatings: (titleType = 'movie') =>
     apiFetch<RatingAnalytics>(`/api/analytics/ratings?titleType=${titleType}`),
