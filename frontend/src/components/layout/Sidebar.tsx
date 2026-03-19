@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, Film, BarChart2, TrendingUp,
-  Users, Sparkles, Bookmark,
+  Users, Sparkles, Bookmark, Scale,
 } from 'lucide-react';
 
 interface NavEntry {
@@ -13,6 +13,7 @@ interface NavEntry {
 const NAV_ITEMS: NavEntry[] = [
   { to: '/',              icon: <LayoutDashboard size={16} />, label: 'Dashboard' },
   { to: '/movies',        icon: <Film size={16} />,            label: 'Movies' },
+  { to: '/compare',       icon: <Scale size={16} />,           label: 'Compare' },
   { to: '/analytics/genres', icon: <BarChart2 size={16} />,   label: 'Genre Analytics' },
   { to: '/analytics/trends', icon: <TrendingUp size={16} />,  label: 'Trends' },
   { to: '/analytics/people', icon: <Users size={16} />,       label: 'Directors & Actors' },

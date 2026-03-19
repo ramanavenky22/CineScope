@@ -26,7 +26,8 @@ function createSchema(db) {
       genres          TEXT,
       budget          INTEGER DEFAULT 0,
       revenue         INTEGER DEFAULT 0,
-      popularity      REAL DEFAULT 0
+      popularity      REAL DEFAULT 0,
+      posterUrl       TEXT
     );
 
     CREATE TABLE IF NOT EXISTS title_ratings (

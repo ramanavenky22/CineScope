@@ -48,6 +48,9 @@ const REAL_TV_SHOWS = [
   'The Boys', 'Invincible', 'Arcane', 'Cyberpunk: Edgerunners', 'Castlevania', 'The Witcher', 'Brat', 'Daredevil', 'The Punisher', 'Loki'
 ];
 
+// Poster URL: always use picsum.photos for reliable unique images per movie.
+// For real TMDB posters, run: TMDB_API_KEY=key node scripts/fetch-posters.js
+
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 function pickN(arr, n) {
   const shuffled = [...arr].sort(() => 0.5 - Math.random());
@@ -121,6 +124,8 @@ function generateMovies(count, people) {
     const revenue = Math.random() < 0.1 ? 0 : Math.round(budget * revenueFactor);
     const popularity = randFloat(10, 1000, 2);
 
+    const posterUrl = `https://picsum.photos/seed/${encodeURIComponent(primaryTitle)}/300/450`;
+
     movies.push({
       tconst, titleType, primaryTitle,
       originalTitle: primaryTitle,
@@ -128,6 +133,7 @@ function generateMovies(count, people) {
       runtimeMinutes: runtime,
       genres: genreList.join(','),
       budget, revenue, popularity,
+      posterUrl,
     });
 
     const avgRating = randFloat(6.0, 9.8, 1);
@@ -204,9 +210,9 @@ function seed(db) {
   // Insert movies
   const insertMovie = db.prepare(`
     INSERT OR IGNORE INTO title_basics
-      (tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, genres, budget, revenue, popularity)
+      (tconst, titleType, primaryTitle, originalTitle, isAdult, startYear, endYear, runtimeMinutes, genres, budget, revenue, popularity, posterUrl)
     VALUES
-      (@tconst, @titleType, @primaryTitle, @originalTitle, @isAdult, @startYear, @endYear, @runtimeMinutes, @genres, @budget, @revenue, @popularity)
+      (@tconst, @titleType, @primaryTitle, @originalTitle, @isAdult, @startYear, @endYear, @runtimeMinutes, @genres, @budget, @revenue, @popularity, @posterUrl)
   `);
   const insertManyMovies = db.transaction(rows => rows.forEach(r => insertMovie.run(r)));
   insertManyMovies(movies);

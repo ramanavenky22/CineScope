@@ -146,7 +146,7 @@ router.post('/natural', (req, res) => {
     delete paramValues.titleType; // will re-add positionally
     const stmt = db.prepare(`
       SELECT b.tconst, b.primaryTitle, b.titleType, b.startYear,
-             b.genres, b.runtimeMinutes, b.budget, b.revenue, b.popularity,
+             b.genres, b.runtimeMinutes, b.budget, b.revenue, b.popularity, b.posterUrl,
              r.averageRating, r.numVotes
       FROM title_basics b
       LEFT JOIN title_ratings r ON b.tconst = r.tconst
@@ -158,7 +158,7 @@ router.post('/natural', (req, res) => {
   } else {
     results = db.prepare(`
       SELECT b.tconst, b.primaryTitle, b.titleType, b.startYear,
-             b.genres, b.runtimeMinutes, b.budget, b.revenue, b.popularity,
+             b.genres, b.runtimeMinutes, b.budget, b.revenue, b.popularity, b.posterUrl,
              r.averageRating, r.numVotes
       FROM title_basics b
       LEFT JOIN title_ratings r ON b.tconst = r.tconst
