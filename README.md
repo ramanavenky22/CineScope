@@ -48,7 +48,7 @@ CineScope/
 ```bash
 cd backend
 npm install
-node index.js
+npm run dev
 ```
 
 The API server starts at `http://localhost:3001`.
