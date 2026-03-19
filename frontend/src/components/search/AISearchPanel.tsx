@@ -157,10 +157,14 @@ export function AISearchPanel({ onSelectMovie }: Props) {
                 {/* Parsed filters as pseudo-SQL */}
                 {showFilters && Object.keys(result.parsedFilters || {}).length > 0 && (
                   <div className="ai-sql-block">
-                    {`SELECT * FROM movies\nWHERE ${Object.entries(result.parsedFilters)
-                      .filter(([, v]) => v !== undefined)
-                      .map(([k, v]) => `${k} = ${JSON.stringify(v)}`)
-                      .join('\n  AND ')}`}
+                    {result.parsedFilters['generated_sql'] ? (
+                      result.parsedFilters['generated_sql']
+                    ) : (
+                      `SELECT * FROM movies\nWHERE ${Object.entries(result.parsedFilters)
+                        .filter(([, v]) => v !== undefined)
+                        .map(([k, v]) => `${k} = ${JSON.stringify(v)}`)
+                        .join('\n  AND ')}`
+                    )}
                   </div>
                 )}
               </div>
