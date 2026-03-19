@@ -65,6 +65,7 @@ npm run dev
 
 The app opens at `http://localhost:5173`.
 Frontend API calls use `http://localhost:3001` by default (configured in `frontend/src/api/client.ts`).
+Set `VITE_API_BASE_URL` in `frontend/.env` to override this for remote backends.
 
 ---
 
