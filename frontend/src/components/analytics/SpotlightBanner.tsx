@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, CalendarDays, Clapperboard, TrendingUp } from 'lucide-react';
 import type { SpotlightItem } from '../../types';
 
+const AUTO_ROTATE_MS = 1000;
+
 const CATEGORY_LABELS: Record<string, string> = {
   'most-anticipated': 'Most Anticipated',
   'trending-now': 'Trending Now',
@@ -34,16 +36,29 @@ export function SpotlightBanner({ items }: Props) {
   const navigate = useNavigate();
   const [activeId, setActiveId] = useState(items[0]?.id ?? '');
 
-  useEffect(() => {
-    if (!items.some(item => item.id === activeId)) {
-      setActiveId(items[0]?.id ?? '');
-    }
-  }, [activeId, items]);
-
   const activeItem = useMemo(
     () => items.find(item => item.id === activeId) ?? items[0],
     [activeId, items]
   );
+
+  const activeIndex = useMemo(
+    () => items.findIndex(item => item.id === activeItem?.id),
+    [activeItem?.id, items]
+  );
+
+  useEffect(() => {
+    if (items.length <= 1) return undefined;
+
+    const timer = window.setInterval(() => {
+      setActiveId(currentId => {
+        const currentIndex = items.findIndex(item => item.id === currentId);
+        const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % items.length : 0;
+        return items[nextIndex]?.id ?? currentId;
+      });
+    }, AUTO_ROTATE_MS);
+
+    return () => window.clearInterval(timer);
+  }, [items]);
 
   if (!activeItem) return null;
 
@@ -127,6 +142,16 @@ export function SpotlightBanner({ items }: Props) {
               </div>
               <div className="spotlight-selector-subtitle">
                 {item.highlightLabel || getCategoryLabel(item.category)}
+              </div>
+              <div className="spotlight-selector-progress">
+                <div
+                  className="spotlight-selector-progress-bar"
+                  style={{
+                    width: item.id === activeItem.id ? '100%' : '0%',
+                    transitionDuration: item.id === activeItem.id ? `${AUTO_ROTATE_MS}ms` : '0ms',
+                  }}
+                  key={`${item.id}-${activeIndex}`}
+                />
               </div>
             </button>
           ))}

@@ -578,6 +578,22 @@ a:hover { text-decoration: underline; }
   color: rgba(255, 255, 255, 0.72);
 }
 
+.spotlight-selector-progress {
+  margin-top: 10px;
+  height: 3px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.spotlight-selector-progress-bar {
+  height: 100%;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.92);
+  transition-property: width;
+  transition-timing-function: linear;
+}
+
 /* ── Section header ── */
 .section-header {
   display: flex;
