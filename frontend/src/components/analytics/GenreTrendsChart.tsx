@@ -181,7 +181,7 @@ export function GenreTrendsChart({ genres, rows, metric }: Props) {
             domain={metric === 'avgRating' ? ['auto', 'auto'] : [0, 'auto']}
           />
           <Tooltip
-            content={<CustomTooltip metric={metric} genres={genres} />}
+            content={<CustomTooltip metric={metric} />}
             cursor={{ stroke: 'var(--border)', strokeDasharray: '5 4' }}
           />
           {genres.map((genre, i) => (
