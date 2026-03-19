@@ -1,5 +1,7 @@
-import { Star, Clock, TrendingUp } from 'lucide-react';
+import { Star, Clock, TrendingUp, Scale, Heart } from 'lucide-react';
 import type { Movie } from '../../types';
+import { useCompare } from '../../contexts/CompareContext';
+import { useWatchlist } from '../../contexts/WatchlistContext';
 
 const GENRE_GRADIENTS: Record<string, string> = {
   Action:      'linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
@@ -38,6 +40,24 @@ interface MovieCardProps {
 export function MovieCard({ movie, onClick }: MovieCardProps) {
   const genres = movie.genres?.split(',').map(g => g.trim()).slice(0, 2) || [];
   const revenue = formatRevenue(movie.revenue);
+  const { addToCompare, removeFromCompare, isInCompare } = useCompare();
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
+  const inCompare = isInCompare(movie.tconst);
+  const inWatchlist = isInWatchlist(movie.tconst);
+
+  const handleWatchlistClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    inWatchlist ? removeFromWatchlist(movie.tconst) : addToWatchlist(movie);
+  };
+
+  const handleCompareClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (inCompare) {
+      removeFromCompare(movie.tconst);
+    } else {
+      addToCompare(movie);
+    }
+  };
 
   return (
     <div className="movie-card" onClick={() => onClick(movie)}>
@@ -46,6 +66,15 @@ export function MovieCard({ movie, onClick }: MovieCardProps) {
         className="movie-poster"
         style={{ background: getPosterGradient(movie.genres) }}
       >
+        {movie.posterUrl && (
+          <img
+            src={movie.posterUrl}
+            alt={movie.primaryTitle}
+            className="movie-poster-img"
+            loading="lazy"
+            onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
+        )}
         <div className="movie-poster-overlay" />
 
         {/* Genre label top-left */}
@@ -55,6 +84,7 @@ export function MovieCard({ movie, onClick }: MovieCardProps) {
               position: 'absolute',
               top: 10,
               left: 10,
+              zIndex: 2,
               background: 'rgba(0,0,0,0.55)',
               backdropFilter: 'blur(6px)',
               borderRadius: '4px',
@@ -75,6 +105,7 @@ export function MovieCard({ movie, onClick }: MovieCardProps) {
               position: 'absolute',
               top: 10,
               right: 10,
+              zIndex: 2,
               background: 'rgba(0,0,0,0.55)',
               backdropFilter: 'blur(6px)',
               borderRadius: '4px',
@@ -86,6 +117,24 @@ export function MovieCard({ movie, onClick }: MovieCardProps) {
             {movie.startYear}
           </span>
         )}
+
+        {/* Watchlist button */}
+        <button
+          className={`watchlist-btn${inWatchlist ? ' active' : ''}`}
+          onClick={handleWatchlistClick}
+          title={inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}
+        >
+          <Heart size={12} fill={inWatchlist ? 'currentColor' : 'none'} />
+        </button>
+
+        {/* Compare button */}
+        <button
+          className={`compare-btn${inCompare ? ' active' : ''}`}
+          onClick={handleCompareClick}
+          title={inCompare ? 'Remove from comparison' : 'Add to comparison'}
+        >
+          <Scale size={12} />
+        </button>
 
         {/* Rating badge */}
         {movie.averageRating !== undefined && (
