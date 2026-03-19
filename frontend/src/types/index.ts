@@ -167,6 +167,21 @@ export interface TopMovies {
   bestROI: (Movie & { roi: number })[];
 }
 
+export interface SpotlightItem {
+  id: string;
+  title: string;
+  releaseYear?: number;
+  releaseWindow: string;
+  genres?: string;
+  status: string;
+  category: string;
+  highlightLabel?: string;
+  tagline?: string;
+  description?: string;
+  linkedTconst?: string | null;
+  sortOrder: number;
+}
+
 export interface SearchResult {
   query: string;
   movies: SearchMovie[];

@@ -2,7 +2,7 @@ import type {
   Movie, MovieListResponse, MovieAnalytics, CastMember,
   KPI, GenreStat, YearTrend, GenreTrendsResponse, RatingAnalytics, RuntimeAnalytics,
   LanguageAnalytics, TopMovies, DirectorStat, ActorStat,
-  Person, SearchResult, NaturalSearchResult, Filters, GenrePeersResponse,
+  Person, SearchResult, NaturalSearchResult, Filters, GenrePeersResponse, SpotlightItem,
 } from '../types';
 
 const BASE_URL = 'http://localhost:3001';
@@ -70,6 +70,9 @@ export const api = {
 
   getTopMovies: (params: { titleType?: string; limit?: number } = {}) =>
     apiFetch<TopMovies>(`/api/analytics/top-movies${toQuery(params as Record<string, string | number | boolean | undefined>)}`),
+
+  getSpotlights: () =>
+    apiFetch<SpotlightItem[]>('/api/analytics/spotlight'),
 
   getDirectors: (params: { limit?: number; minMovies?: number } = {}) =>
     apiFetch<DirectorStat[]>(`/api/analytics/directors${toQuery(params as Record<string, string | number | boolean | undefined>)}`),
