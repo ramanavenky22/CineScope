@@ -168,12 +168,14 @@ CineScope/
 
 ## Features
 
-- **Dashboard** — KPI cards, genre breakdown, yearly trends, top movies table
-- **Movies** — Grid/list browse with filters (genre, year range, rating, sort)
-- **Movie Detail** — Cast, crew, similar titles, benchmark analytics
-- **Analytics** — Genre stats, year-over-year trends, rating distribution
+- **Dashboard** — KPI cards, genre breakdown, yearly trends, top movies table, and search results analytics panel
+- **Movies** — Grid/list browse with filters (genre, year range, rating, sort), real poster images, and compare option
+- **Movie Detail** — Cast, crew, similar titles, benchmark analytics, AI insight summary, and recommendation explanations
+- **Analytics** — Genre stats, year-over-year trends, rating distribution, and aggregated search insights
 - **People** — Top directors and actors with filmographies
-- **AI Search** — Natural language queries (e.g. *"sci-fi movies from the 2010s with rating above 7.5"*)
+- **AI Search** — Natural language queries (e.g. *"sci-fi movies from the 2010s with rating above 7.5"*) with detailed analytics output
+- **Comparison** — Side-by-side comparison (up to 3 movies) with metrics table, radar chart, revenue chart, and insights
+- **Personalization** — Watchlist/favorites with localStorage persistence
 - **Dark/Light Mode** — Toggle-able theme throughout the app
 
 ---
