@@ -38,6 +38,8 @@ sequenceDiagram
     GH_Actions-->>Developer: 7. Workflow Completes Successfully (Green Checkmark)
 ```
 
+
+
 ## Step-by-Step Breakdown
 
 ### 1. Code Push (The Trigger)
