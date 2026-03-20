@@ -32,7 +32,7 @@ sequenceDiagram
     GCB-->>GH_Actions: Build Success Status
     
     GH_Actions->>CR: 6. Deploy new image to Cloud Run (`gcloud run deploy`)
-    Note over CR: Provisions new container replica, maps ports & environments (GEMINI_API_KEY)
+    Note over CR: Provisions new container replica, maps env vars (GEMINI_API_KEY)
     
     CR-->>GH_Actions: Deployment Success & Live Service URL Returned
     GH_Actions-->>Developer: 7. Workflow Completes Successfully (Green Checkmark)
