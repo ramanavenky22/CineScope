@@ -1,4 +1,4 @@
-name: Deploy Frontend
+name: Deploy Frontend to Vercel
 
 on:
   push:
@@ -11,14 +11,17 @@ jobs:
   deploy:
     name: Deploy to Vercel
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: frontend
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
