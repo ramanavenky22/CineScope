@@ -2,6 +2,7 @@
 
 This guide contains the step-by-step commands to deploy the CineScope backend to Google Cloud Run using Google Cloud Build and Artifact Registry.
 
+
 ## Prerequisites
 - Google Cloud CLI (`gcloud`) installed and authenticated.
 - Ensure you are inside the `backend` directory when running these commands.
