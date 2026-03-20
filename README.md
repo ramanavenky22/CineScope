@@ -2,11 +2,36 @@
 
 A full-stack movie analytics and discovery platform powered by IMDB data. Browse and search movies, explore genre breakdowns, year-over-year trends, people leaderboards, and a natural language search interface.
 
+## Problem and Idea
+
+Movie data is massive and hard to explore with simple list UIs. CineScope addresses this by combining:
+- a movie discovery interface,
+- analytics dashboards for trends and comparisons,
+- and natural-language search for faster query building.
+
+## Project Requirement Alignment
+
+This repository is prepared to satisfy presentation requirements:
+- Working implementation (frontend + backend)
+- Organized structure (`frontend/`, `backend/`, docs)
+- Incremental commit history (small, traceable check-ins)
+- README coverage for:
+  - problem and idea,
+  - key technical choices,
+  - run instructions
+
 ## Tech Stack
 
 - **Backend**: Node.js + Express + SQLite (better-sqlite3)
 - **Frontend**: React 19 + TypeScript + Vite + Recharts
 - **Database**: SQLite with WAL mode, IMDB-compatible schema
+
+## Key Technical Choices
+
+- **Express + SQLite API backend** for fast local analytics and simple deployment flow
+- **React + TypeScript frontend** for maintainable component architecture
+- **Vite tooling** for quick dev/build feedback loops
+- **Gemini-powered natural-language search** (`gemini-2.5-flash`) that turns user prompts into SQL and returns ranked results
 
 ---
 
@@ -36,7 +61,7 @@ CineScope/
 
 ---
 
-## Getting Started
+## How to Run
 
 ### Prerequisites
 
@@ -48,7 +73,7 @@ CineScope/
 ```bash
 cd backend
 npm install
-node index.js
+npm run dev
 ```
 
 The API server starts at `http://localhost:3001`.
@@ -64,6 +89,23 @@ npm run dev
 ```
 
 The app opens at `http://localhost:5173`.
+Frontend API calls use `http://localhost:3001` by default (configured in `frontend/src/api/client.ts`).
+Set `VITE_API_BASE_URL` in `frontend/.env.local` (or `.env`) to override this for remote backends.
+
+### Environment Variables
+
+Create `backend/.env`:
+
+```bash
+GEMINI_API_KEY=your_key_here
+```
+
+Optional backend variables:
+
+```bash
+PORT=3001
+NODE_ENV=development
+```
 
 ---
 
@@ -126,12 +168,14 @@ CineScope/
 
 ## Features
 
-- **Dashboard** — KPI cards, genre breakdown, yearly trends, top movies table
-- **Movies** — Grid/list browse with filters (genre, year range, rating, sort)
-- **Movie Detail** — Cast, crew, similar titles, benchmark analytics
-- **Analytics** — Genre stats, year-over-year trends, rating distribution
+- **Dashboard** — KPI cards, genre breakdown, yearly trends, top movies table, and search results analytics panel
+- **Movies** — Grid/list browse with filters (genre, year range, rating, sort), real poster images, and compare option
+- **Movie Detail** — Cast, crew, similar titles, benchmark analytics, AI insight summary, and recommendation explanations
+- **Analytics** — Genre stats, year-over-year trends, rating distribution, and aggregated search insights
 - **People** — Top directors and actors with filmographies
-- **AI Search** — Natural language queries (e.g. *"sci-fi movies from the 2010s with rating above 7.5"*)
+- **AI Search** — Natural language queries (e.g. *"sci-fi movies from the 2010s with rating above 7.5"*) with detailed analytics output
+- **Comparison** — Side-by-side comparison (up to 3 movies) with metrics table, radar chart, revenue chart, and insights
+- **Personalization** — Watchlist/favorites with localStorage persistence
 - **Dark/Light Mode** — Toggle-able theme throughout the app
 
 ---
