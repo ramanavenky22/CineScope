@@ -59,7 +59,7 @@ export function Dashboard() {
     <div>
       {/* Page title */}
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700 }}>CineScope Dashboard</h1>
+        <h1 style={{ fontSize: 22, fontWeight: 700 }}>Dashboard</h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: 13.5, marginTop: 4 }}>
           Global analytics overview for all movies in the database.
         </p>
